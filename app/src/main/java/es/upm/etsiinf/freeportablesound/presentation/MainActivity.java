@@ -39,22 +39,18 @@ public class MainActivity extends AppCompatActivity {
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
-                if (!query.isEmpty()) {
-                    // Setting up the loading flag
-                    loading = true;
+                // Setting up the loading flag
+                loading = true;
 
-                    // Building up the proper query URL
-                    URL url = APIUrlFactory.getTextQueryURL(query);
+                // Building up the proper query URL
+                URL url = APIUrlFactory.getTextQueryURL(query);
 
-                    // Example of how to use the APIUrlFactory
-                    Log.d(TAG, "Searching via URL:" + url.toString());
+                // Example of how to use the APIUrlFactory
+                Log.d(TAG, "Searching via URL:" + url.toString());
 
-                    // Launching the background task
-                    DownloadSoundsThread dTask = new DownloadSoundsThread(MainActivity.this, url);
-                    new Thread(dTask).start();
-                } else {
-                    Log.d(TAG, "Search tried with empty query");
-                }
+                // Launching the background task
+                DownloadSoundsThread dTask = new DownloadSoundsThread(MainActivity.this, url);
+                new Thread(dTask).start();
                 return true;
             }
 

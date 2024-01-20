@@ -27,34 +27,45 @@ public class PlayPreviewThread implements Runnable {
     public PlayPreviewThread(URL url, AppCompatImageButton playButton){
         this.url = url;
         this.playButton = playButton;
+
+        // Variable initialization
+        mediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+            @Override
+            public void onCompletion(MediaPlayer mp) {
+                mediaPlayer.reset();
+                // Changing the play button icon again
+                playButton.setImageResource(R.drawable.ic_play_button);
+                isCurrentlyPlaying = false;
+                currentlyPlayingButton = null;
+            }
+        });
     }
 
     @Override
     public void run() {
-        if (isCurrentlyPlaying) {
-            if(mediaPlayer.isPlaying())
+
+        // Variable initialization
+        boolean was_i_playing = currentlyPlayingButton == playButton;
+
+        if (isCurrentlyPlaying) { // Someone is playing, stop it
+            if (mediaPlayer.isPlaying()) {
                 mediaPlayer.stop();
+            }
             mediaPlayer.reset();
             // Variable Updating
-            isCurrentlyPlaying = false;
             currentlyPlayingButton.setImageResource(R.drawable.ic_play_button);
+            currentlyPlayingButton = null;
+            isCurrentlyPlaying = false;
         }
 
-        if (currentlyPlayingButton != playButton) {
-            // Variable Updating
+        if (!was_i_playing) { // If I wasn't playing, play my sound
+            // Play sound
             isCurrentlyPlaying = true;
             currentlyPlayingButton = playButton;
-
-            // Performing the request
-            String result = APIConnector.performRequest(url);
-
-            // Changing the play button icon
             playButton.setImageResource(R.drawable.ic_pause_button);
 
-            // Debugging
-            Log.d(TAG, "Preview results: " + result);
-
-            // Getting the URI for the preview audio
+            // Performing the request and getting the URI for the preview audio
+            String result = APIConnector.performRequest(url);
             JsonObject jsonObject = JsonParser.parseString(result).getAsJsonObject();
             String preview_uri = jsonObject.getAsJsonObject("previews")
                     .get("preview-hq-mp3")
@@ -66,29 +77,14 @@ public class PlayPreviewThread implements Runnable {
             // Playing the sound
             try {
                 // Reset MediaPlayer to play a new sound
-                mediaPlayer.reset();
                 mediaPlayer.setDataSource(preview_uri);
                 mediaPlayer.prepare();
-                mediaPlayer.start();
-
-                // Release the MediaPlayer after playing the sound
-                mediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
-                    @Override
-                    public void onCompletion(MediaPlayer mp) {
-                        mediaPlayer.reset();
-                        mediaPlayer.release();
-                        // Changing the play button icon again
-                        playButton.setImageResource(R.drawable.ic_play_button);
-                        isCurrentlyPlaying = false;
-                    }
-                });
+                if (currentlyPlayingButton == playButton) { // Last minute check
+                    mediaPlayer.start();
+                }
             } catch (Exception e) {
                 Log.e(TAG, "Error playing the requested sound: " + e.getMessage());
             }
-        } else {
-            // Variable Updating
-            isCurrentlyPlaying = false;
-            currentlyPlayingButton = null;
         }
     }
 }
