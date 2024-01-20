@@ -5,6 +5,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.AbsListView;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.SearchView;
@@ -12,6 +13,7 @@ import android.widget.SearchView;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
+import java.net.MalformedURLException;
 import java.net.URL;
 
 import es.upm.etsiinf.freeportablesound.R;
@@ -22,6 +24,9 @@ import es.upm.etsiinf.shared.SearchResults;
 public class MainActivity extends AppCompatActivity {
 
     private static final String TAG = "MainActivity";
+    private boolean loading = false;
+    private URL nextURL = null;
+    private SoundAdapter adapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,6 +40,9 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public boolean onQueryTextSubmit(String query) {
                 if (!query.isEmpty()) {
+                    // Setting up the loading flag
+                    loading = true;
+
                     // Building up the proper query URL
                     URL url = APIUrlFactory.getTextQueryURL(query);
 
@@ -52,8 +60,39 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public boolean onQueryTextChange(String s) {
-                // TODO Perform live updates of search results
+                // Not needed
                 return true;
+            }
+        });
+
+        // Set up ListView
+        ListView listView = findViewById(R.id.listView);
+        listView.setOnScrollListener(new AbsListView.OnScrollListener() {
+            @Override
+            public void onScrollStateChanged(AbsListView view, int scrollState) {
+                // Not needed
+            }
+
+            @Override
+            public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
+                // Check if the last visible item is close to the end of the list
+                int lastVisibleItem = firstVisibleItem + visibleItemCount;
+                if (firstVisibleItem > 0 && lastVisibleItem >= totalItemCount - 1 && !loading) {
+                    Log.d(TAG, "Loading more sounds...");
+
+                    // Setting up the loading flag
+                    loading = true;
+
+                    // Building up the proper query URL
+                    URL url = nextURL;
+
+                    // Example of how to use the APIUrlFactory
+                    Log.d(TAG, "Searching via URL:" + url.toString());
+
+                    // Launching the background task
+                    DownloadSoundsThread dTask = new DownloadSoundsThread(MainActivity.this, url);
+                    new Thread(dTask).start();
+                }
             }
         });
     }
@@ -85,11 +124,20 @@ public class MainActivity extends AppCompatActivity {
         SearchResults parsed_results = gson.fromJson(results, SearchResults.class);
 
         // Debugging
-        Log.d(TAG, "Number retrieved results: " + parsed_results.getCount());
+        Log.d(TAG, "Number  ofretrieved results: " + parsed_results.getCount());
 
-        // Updating the ListView
-        ListView listView = findViewById(R.id.listView);
-        SoundAdapter soundAdapter = new SoundAdapter(this, parsed_results.getResults());
-        listView.setAdapter(soundAdapter);
+        // Updating the ListView and some variables
+        if (nextURL == null) { // First time
+            ListView listView = findViewById(R.id.listView);
+            adapter = new SoundAdapter(this, parsed_results.getResults());
+            listView.setAdapter(adapter);
+        } else {
+            adapter.addAll(parsed_results.getResults());
+            adapter.notifyDataSetChanged();
+        }
+
+        // Updating variables
+        nextURL = APIUrlFactory.getNextPageURL(parsed_results.getNext());
+        loading = false;
     }
 }

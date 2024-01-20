@@ -25,6 +25,16 @@ public class APIUrlFactory {
         }
     }
 
+    public static URL getNextPageURL(String query) {
+        try {
+            // Building up the url for the required query
+            return new URL( query + "&token=" + API_KEY);
+        } catch (MalformedURLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+
     public static URL getPreviewURL(int id) {
         try {
             // Building up the url for the required query

@@ -2,6 +2,8 @@ package es.upm.etsiinf.shared;
 
 import com.google.gson.annotations.SerializedName;
 
+import java.util.List;
+
 public class SearchResults {
 
     @SerializedName("count")
@@ -14,7 +16,7 @@ public class SearchResults {
     private String next;
 
     @SerializedName("results")
-    private Sound[] results;
+    private List<Sound> results;
 
     // Getters and setters
     public int getCount() {
@@ -41,11 +43,11 @@ public class SearchResults {
         this.next = next;
     }
 
-    public Sound[] getResults() {
+    public List<Sound> getResults() {
         return results;
     }
 
-    public void setResults(Sound[] results) {
+    public void setResults(List<Sound> results) {
         this.results = results;
     }
 }
