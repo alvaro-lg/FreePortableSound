@@ -1,3 +1,5 @@
+import java.util.Properties
+
 plugins {
     id("com.android.application")
 }
@@ -5,6 +7,10 @@ plugins {
 android {
     namespace = "es.upm.etsiinf.freeportablesound"
     compileSdk = 34
+
+    buildFeatures {
+        buildConfig = true
+    }
 
     defaultConfig {
         applicationId = "es.upm.etsiinf.freeportablesound"
@@ -28,8 +34,18 @@ android {
     }
 }
 
-dependencies {
+afterEvaluate {
+    // Loading API key
+    val keystoreFile = project.rootProject.file("apikeys.properties")
+    val properties = Properties()
+    properties.load(keystoreFile.inputStream())
 
+    // Return empty key in case something goes wrong
+    val apiKey = properties.getProperty("API_KEY") ?: ""
+    android.buildTypes["debug"].buildConfigField("String", "API_KEY", "\"$apiKey\"")
+}
+
+dependencies {
     implementation("androidx.appcompat:appcompat:1.6.1")
     implementation("com.google.android.material:material:1.10.0")
     implementation("androidx.constraintlayout:constraintlayout:2.1.4")
