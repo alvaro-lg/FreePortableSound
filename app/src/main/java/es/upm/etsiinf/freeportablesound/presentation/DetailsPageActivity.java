@@ -1,9 +1,22 @@
 package es.upm.etsiinf.freeportablesound.presentation;
 
 
+import android.app.Activity;
+import android.app.DownloadManager;
+import android.app.Notification;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
+import android.content.pm.PackageManager;
+import android.database.Cursor;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
+import android.os.Environment;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -11,18 +24,26 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.app.NotificationCompat;
+import androidx.core.content.ContextCompat;
 
 import com.bumptech.glide.Glide;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
 import java.net.URL;
-import java.text.SimpleDateFormat;
+import java.util.concurrent.atomic.AtomicLong;
 
 import es.upm.etsiinf.freeportablesound.R;
 import es.upm.etsiinf.freeportablesound.application.DownloadDetailsThread;
+import es.upm.etsiinf.freeportablesound.application.DownloadSoundFileThread;
 import es.upm.etsiinf.freeportablesound.application.PlayPreviewThread;
 import es.upm.etsiinf.freeportablesound.domain.APIUrlFactory;
 import es.upm.etsiinf.shared.SoundDetails;
@@ -30,7 +51,14 @@ import es.upm.etsiinf.shared.SoundDetails;
 public class DetailsPageActivity extends AppCompatActivity {
 
     private static int soundId;
-    private String TAG = "DetailsPageActivity (id: " + String.valueOf(soundId) + ")";
+    private static String TAG = "DetailsPageActivity (id: " + String.valueOf(soundId) + ")";
+
+    // For synchronization with the download thread
+    public AtomicLong download_id = new AtomicLong();
+
+    // For notifications
+    private NotificationHandler handler;
+    private static int count =0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,6 +68,7 @@ public class DetailsPageActivity extends AppCompatActivity {
         // Getting the sound ID from the intent
         Intent intent = getIntent();
         soundId = intent.getExtras().getInt("soundId");
+        handler = new NotificationHandler(this);
 
         // Building up the proper query URL
         URL url = APIUrlFactory.getDetailsURL(soundId);
@@ -152,5 +181,48 @@ public class DetailsPageActivity extends AppCompatActivity {
                 startActivity(shareIntent);
             }
         });
+
+        Button downloadButton = findViewById(R.id.btnDownload);
+        downloadButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                // TODO Implement download of full sound (requires Oauth2)
+                URL download_url = APIUrlFactory.getPreviewURL(soundId);
+
+                IntentFilter filter = new IntentFilter(DownloadManager.ACTION_DOWNLOAD_COMPLETE);
+                BroadcastReceiver receiver = new Receiver();
+                registerReceiver(receiver, filter);
+
+                DownloadSoundFileThread dTask = new DownloadSoundFileThread(
+                        DetailsPageActivity.this, download_url,
+                        (DownloadManager) getSystemService(Context.DOWNLOAD_SERVICE));
+                new Thread(dTask).start();
+
+                // Display a Toast message
+                Toast.makeText(DetailsPageActivity.this, "Downloading...", Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    public class Receiver extends BroadcastReceiver {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            long reference = intent.getLongExtra(DownloadManager.EXTRA_DOWNLOAD_ID, -1);
+            if (reference == download_id.get()) {
+                //Toast.makeText(context, "...download finished", Toast.LENGTH_SHORT).show();
+
+                // Get the URI of the downloaded file
+                DownloadManager downloadManager = (DownloadManager) context.getSystemService(Context.DOWNLOAD_SERVICE);
+                Uri fileUri = downloadManager.getUriForDownloadedFile(reference);
+
+                Log.d(TAG, "Downloading file finished: " + fileUri);
+
+                Notification.Builder nBuilder =  handler.createNotification("FreePortableSound",
+                        "Finished downloading " + fileUri.toString(), true, fileUri);
+                handler.getManager().notify(count++, nBuilder.build());
+                handler.publishGroup(true);
+            }
+        }
     }
 }
