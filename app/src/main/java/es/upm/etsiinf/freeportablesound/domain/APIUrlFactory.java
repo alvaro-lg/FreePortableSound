@@ -25,7 +25,7 @@ public class APIUrlFactory {
         }
     }
 
-    public static URL getNextPageURL(String query) {
+    public static URL addAuthenticationURL(String query) {
         try {
             // Building up the url for the required query
             return new URL( query + "&token=" + API_KEY);
@@ -40,6 +40,18 @@ public class APIUrlFactory {
             // Building up the url for the required query
             return new URL("https://freesound.org/apiv2/sounds/" + id + "/?fields=previews" +
                     "&token=" + API_KEY);
+        } catch (MalformedURLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public static URL getDetailsURL(int id) {
+        try {
+            // Building up the url for the required query
+            return new URL("https://freesound.org/apiv2/sounds/" + id + "/?fields=" +
+                    "images,name,tags,description,created,license,type,filesize,duration," +
+                    "samplerate,username,num_downloads,avg_rating,num_ratings,download," +
+                    "peviews" + "&token=" + API_KEY);
         } catch (MalformedURLException e) {
             throw new RuntimeException(e);
         }

@@ -46,7 +46,6 @@
         android:layout_alignParentEnd="true"
         android:layout_alignTop="@id/textSoundName"
         android:layout_marginStart="16dp"
-        android:onClick="onPlayButtonClick"
         />
 
 </RelativeLayout>

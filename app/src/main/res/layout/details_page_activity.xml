@@ -5,20 +5,131 @@
     android:layout_height="match_parent"
     tools:context=".presentation.MainPageActivity">
 
-    <!-- Sound id -->
-    <TextView
-        android:id="@+id/textSoundId"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textSize="20sp"
-        android:textStyle="bold"
-        android:textColor="@android:color/black"
-        android:maxLines="1"
-        android:ellipsize="end"
+    <!-- Header with image loaded from API -->
+    <ImageView
+        android:id="@+id/imageHeader"
+        android:layout_width="match_parent"
+        android:layout_height="200dp"
+        android:scaleType="centerCrop"
         android:layout_alignParentTop="true"
         android:layout_alignParentStart="true"
-        android:text="@string/default_name"
-        />
+        android:layout_alignParentEnd="true"
+        android:contentDescription="@string/content_description" />
+
+    <!-- Scrollable body -->
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@id/imageHeader">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="16dp">
+
+            <!-- Information about the sound -->
+            <TextView
+                android:id="@+id/textSoundName"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/sound_name"/>
+
+            <TextView
+                android:id="@+id/textTags"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/tags"/>
+
+            <TextView
+                android:id="@+id/textDescription"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/description"/>
+
+            <TextView
+                android:id="@+id/textDateOfCreation"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/date_of_creation"/>
+
+            <TextView
+                android:id="@+id/textLicense"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/license"/>
+
+            <TextView
+                android:id="@+id/textType"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/type"/>
+
+            <TextView
+                android:id="@+id/textFileSize"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/file_size"/>
+
+            <TextView
+                android:id="@+id/textDuration"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/duration"/>
+
+            <TextView
+                android:id="@+id/textSampleRate"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/sample_rate"/>
+
+            <TextView
+                android:id="@+id/textUsername"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/username"/>
+
+            <TextView
+                android:id="@+id/textNumDownloads"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/number_of_downloads"/>
+
+            <TextView
+                android:id="@+id/textAvgRating"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/average_rating"/>
+
+            <TextView
+                android:id="@+id/textNumRatings"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/number_of_ratings"/>
+
+            <!-- Download button -->
+            <Button
+                android:id="@+id/btnDownload"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/download"/>
+
+            <!-- Play/Pause button (circular) -->
+            <ImageButton
+                android:id="@+id/btnPlay"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/ic_play_button"
+                android:background="?android:selectableItemBackground"
+                android:layout_marginStart="16dp"
+                android:contentDescription="@string/content_description"/>
+            <Button
+                android:id="@+id/btnShare"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/share"/>
+        </LinearLayout>
+    </ScrollView>
 
     <!-- ProgressBar for loading indicator -->
     <ProgressBar

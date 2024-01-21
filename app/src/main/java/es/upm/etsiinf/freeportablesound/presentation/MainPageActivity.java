@@ -20,7 +20,7 @@ import java.net.URL;
 import es.upm.etsiinf.freeportablesound.R;
 import es.upm.etsiinf.freeportablesound.domain.APIUrlFactory;
 import es.upm.etsiinf.freeportablesound.application.DownloadSoundsThread;
-import es.upm.etsiinf.shared.SearchResults;
+import es.upm.etsiinf.shared.SearchResponse;
 import es.upm.etsiinf.shared.Sound;
 
 public class MainPageActivity extends AppCompatActivity {
@@ -132,14 +132,13 @@ public class MainPageActivity extends AppCompatActivity {
 
         // Parsing the JSON response
         GsonBuilder gsonBuilder = new GsonBuilder();
-        gsonBuilder.setDateFormat("dd/MM/yyyy hh:mm a");
         Gson gson = gsonBuilder.create();
 
         // Actual parsing
-        SearchResults parsed_results = gson.fromJson(results, SearchResults.class);
+        SearchResponse parsed_results = gson.fromJson(results, SearchResponse.class);
 
         // Debugging
-        Log.d(TAG, "Number  ofretrieved results: " + parsed_results.getCount());
+        Log.d(TAG, "Number  of retrieved results: " + parsed_results.getCount());
 
         // Updating the ListView and some variables
         if (nextURL == null) { // First time
@@ -152,7 +151,7 @@ public class MainPageActivity extends AppCompatActivity {
         }
 
         // Updating variables
-        nextURL = APIUrlFactory.getNextPageURL(parsed_results.getNext());
+        nextURL = APIUrlFactory.addAuthenticationURL(parsed_results.getNext());
         loading = false;
     }
 }

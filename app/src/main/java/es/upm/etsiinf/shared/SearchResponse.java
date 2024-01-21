@@ -4,7 +4,7 @@ import com.google.gson.annotations.SerializedName;
 
 import java.util.List;
 
-public class SearchResults {
+public class SearchResponse {
 
     @SerializedName("count")
     private int count;
