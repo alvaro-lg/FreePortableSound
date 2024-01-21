@@ -75,7 +75,8 @@ public class MainPageActivity extends AppCompatActivity {
             public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
                 // Check if the last visible item is close to the end of the list
                 int lastVisibleItem = firstVisibleItem + visibleItemCount;
-                if (firstVisibleItem > 0 && lastVisibleItem >= totalItemCount - 1 && !loading) {
+                if (nextURL != null && firstVisibleItem > 0 && lastVisibleItem >= totalItemCount - 1
+                        && !loading) {
                     Log.d(TAG, "Loading more sounds...");
 
                     // Setting up the loading flag
@@ -151,7 +152,8 @@ public class MainPageActivity extends AppCompatActivity {
         }
 
         // Updating variables
-        nextURL = APIUrlFactory.addAuthenticationURL(parsed_results.getNext());
+        if (parsed_results.getNext() != null)
+            nextURL = APIUrlFactory.addAuthenticationURL(parsed_results.getNext());
         loading = false;
     }
 }

@@ -58,6 +58,9 @@ public class SoundDetails {
     @SerializedName("download")
     private URL download;
 
+    @SerializedName("url")
+    private URL url;
+
     public Images getImages() {
         return images;
     }
@@ -176,5 +179,13 @@ public class SoundDetails {
 
     public void setDownload(URL download) {
         this.download = download;
+    }
+
+    public URL getUrl() {
+        return url;
+    }
+
+    public void setUrl(URL url) {
+        this.url = url;
     }
 }

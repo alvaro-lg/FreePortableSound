@@ -6,6 +6,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
@@ -57,20 +58,20 @@ public class DetailsPageActivity extends AppCompatActivity {
         pb.setVisibility(View.VISIBLE);
     }
 
-    public synchronized void prepareUIFinishDownload(String results){
+    public synchronized void prepareUIFinishDownload(String details){
         // Updating interface elements
         ProgressBar pb = findViewById(R.id.progressBar);
         pb.setVisibility(View.INVISIBLE);
 
         // Debugging
-        Log.d(TAG, "Results:" + results);
+        Log.d(TAG, "Results:" + details);
 
         // Parsing the JSON response
         GsonBuilder gsonBuilder = new GsonBuilder();
         Gson gson = gsonBuilder.create();
 
         // Actual parsing
-        SoundDetails parsed_details = gson.fromJson(results, SoundDetails.class);
+        SoundDetails parsed_details = gson.fromJson(details, SoundDetails.class);
 
         // Updating the fields in the interface
         ImageView imageView = findViewById(R.id.imageHeader); // Image header
@@ -129,6 +130,26 @@ public class DetailsPageActivity extends AppCompatActivity {
 
                 PlayPreviewThread dTask = new PlayPreviewThread(url, playButton);
                 new Thread(dTask).start();
+            }
+        });
+
+        // Set a click listener for the button
+        Button shareButton = findViewById(R.id.btnShare);
+        shareButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // Create the sharing intent
+                Intent sendIntent = new Intent();
+                sendIntent.setAction(Intent.ACTION_SEND);
+                sendIntent.putExtra(Intent.EXTRA_TEXT, "I have a cool sound for you: " +
+                        parsed_details.getUrl().toString());
+                sendIntent.setType("text/plain");
+
+                // Create a chooser to let the user pick the sharing app
+                Intent shareIntent = Intent.createChooser(sendIntent, null);
+
+                // Start the sharing activity
+                startActivity(shareIntent);
             }
         });
     }

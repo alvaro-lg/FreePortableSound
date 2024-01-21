@@ -1,5 +1,7 @@
 package es.upm.etsiinf.freeportablesound.domain;
 
+import android.util.Log;
+
 import java.net.MalformedURLException;
 import java.net.URL;
 
@@ -51,7 +53,7 @@ public class APIUrlFactory {
             return new URL("https://freesound.org/apiv2/sounds/" + id + "/?fields=" +
                     "images,name,tags,description,created,license,type,filesize,duration," +
                     "samplerate,username,num_downloads,avg_rating,num_ratings,download," +
-                    "peviews" + "&token=" + API_KEY);
+                    "peviews,url" + "&token=" + API_KEY);
         } catch (MalformedURLException e) {
             throw new RuntimeException(e);
         }
