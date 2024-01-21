@@ -27,7 +27,7 @@ public class SoundAdapter extends ArrayAdapter<Sound> {
     private final List<Sound> soundList;
 
     public SoundAdapter(Context context, List<Sound> soundList) {
-        super(context, R.layout.item_sound, soundList);
+        super(context, R.layout.sound_list_item, soundList);
         this.context = context;
         this.soundList = soundList;
     }
@@ -35,7 +35,7 @@ public class SoundAdapter extends ArrayAdapter<Sound> {
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        View rowView = inflater.inflate(R.layout.item_sound, parent, false);
+        View rowView = inflater.inflate(R.layout.sound_list_item, parent, false);
 
         // Parsing data
         TextView textSoundName = rowView.findViewById(R.id.textSoundName);

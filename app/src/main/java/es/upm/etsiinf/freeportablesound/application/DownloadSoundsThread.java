@@ -4,7 +4,7 @@ import android.content.Context;
 
 import java.net.URL;
 
-import es.upm.etsiinf.freeportablesound.presentation.MainActivity;
+import es.upm.etsiinf.freeportablesound.presentation.MainPageActivity;
 import es.upm.etsiinf.freeportablesound.infrastructure.APIConnector;
 
 public class DownloadSoundsThread implements Runnable {
@@ -33,19 +33,19 @@ public class DownloadSoundsThread implements Runnable {
     }
 
     private void turnOnProgressBar(){
-        ((MainActivity)ctx).runOnUiThread(new Runnable() {
+        ((MainPageActivity)ctx).runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                ((MainActivity)ctx).prepareUIStartDownload();
+                ((MainPageActivity)ctx).prepareUIStartDownload();
             }
         });
     }
 
     private void turnOffProgressBar(String result){
-        ((MainActivity)ctx).runOnUiThread(new Runnable() {
+        ((MainPageActivity)ctx).runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                ((MainActivity)ctx).prepareUIFinishDownload(result);
+                ((MainPageActivity)ctx).prepareUIFinishDownload(result);
             }
         });
     }

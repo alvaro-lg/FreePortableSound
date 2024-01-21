@@ -2,10 +2,12 @@ package es.upm.etsiinf.freeportablesound.presentation;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.AbsListView;
+import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.SearchView;
@@ -13,17 +15,17 @@ import android.widget.SearchView;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
-import java.net.MalformedURLException;
 import java.net.URL;
 
 import es.upm.etsiinf.freeportablesound.R;
 import es.upm.etsiinf.freeportablesound.domain.APIUrlFactory;
 import es.upm.etsiinf.freeportablesound.application.DownloadSoundsThread;
 import es.upm.etsiinf.shared.SearchResults;
+import es.upm.etsiinf.shared.Sound;
 
-public class MainActivity extends AppCompatActivity {
+public class MainPageActivity extends AppCompatActivity {
 
-    private static final String TAG = "MainActivity";
+    private static final String TAG = "MainPageActivity";
     private boolean loading = false;
     private URL nextURL = null;
     private SoundAdapter adapter;
@@ -31,7 +33,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.main_page_activity);
 
         // Set up SearchView
         SearchView searchView = findViewById(R.id.searchView);
@@ -49,7 +51,7 @@ public class MainActivity extends AppCompatActivity {
                 Log.d(TAG, "Searching via URL:" + url.toString());
 
                 // Launching the background task
-                DownloadSoundsThread dTask = new DownloadSoundsThread(MainActivity.this, url);
+                DownloadSoundsThread dTask = new DownloadSoundsThread(MainPageActivity.this, url);
                 new Thread(dTask).start();
                 return true;
             }
@@ -86,9 +88,26 @@ public class MainActivity extends AppCompatActivity {
                     Log.d(TAG, "Searching via URL:" + url.toString());
 
                     // Launching the background task
-                    DownloadSoundsThread dTask = new DownloadSoundsThread(MainActivity.this, url);
+                    DownloadSoundsThread dTask = new DownloadSoundsThread(MainPageActivity.this, url);
                     new Thread(dTask).start();
                 }
+            }
+        });
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Log.d(TAG,"Item clicked: " + position);
+
+                // Retrieve the data associated with the clicked item
+                Sound clickedSound = (Sound) parent.getItemAtPosition(position);
+
+                // Handle item click, show details in the DetailFragment
+                Log.d(TAG, "Clicked sound id: " + clickedSound.getId());
+                Intent intent = new Intent(MainPageActivity.this, DetailsPageActivity.class);
+
+                // Pass the data as extras to the next activity
+                intent.putExtra("soundId", clickedSound.getId());
+                startActivity(intent);
             }
         });
     }
