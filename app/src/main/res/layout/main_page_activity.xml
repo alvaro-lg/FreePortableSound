@@ -3,7 +3,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".presentation.MainPageActivity">
+    tools:context=".presentation.MainPageActivity"
+    android:background="@color/background">
 
     <!-- SearchView for searching sounds -->
     <android.widget.SearchView
@@ -16,7 +17,9 @@
         android:layout_marginTop="16dp"
         android:layout_marginEnd="16dp"
         android:iconifiedByDefault="false"
-        android:queryHint="Type to search sounds" />
+        android:queryHint="Type to search sounds"
+        android:background="@color/white"
+        />
 
     <!-- ListView to display the list of sounds -->
     <ListView
@@ -26,7 +29,7 @@
         android:layout_below="@id/searchView"
         android:padding="8dp"
         android:clipToPadding="false"
-        android:divider="@android:color/darker_gray"
+        android:divider="@color/gray"
         android:dividerHeight="1dp" />
 
     <!-- ProgressBar for loading indicator -->

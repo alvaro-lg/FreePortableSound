@@ -110,7 +110,8 @@ public class DetailsPageActivity extends AppCompatActivity {
         name.setText(parsed_details.getName());
 
         TextView tags = findViewById(R.id.textTags); // Tags
-        tags.setText(parsed_details.getTags().toString());
+        tags.setText(parsed_details.getTags().toString().replace("[", "")
+                .replace("]", ""));
 
         TextView description = findViewById(R.id.textDescription); // Description
         description.setText(parsed_details.getDescription());
@@ -123,28 +124,30 @@ public class DetailsPageActivity extends AppCompatActivity {
         license.setText(parsed_details.getLicense());
 
         TextView type = findViewById(R.id.textType); // Type
-        type.setText(parsed_details.getType());
+        type.setText("File type: " + parsed_details.getType());
 
         TextView fileSize = findViewById(R.id.textFileSize); // File size
-        fileSize.setText(parsed_details.getFilesize());
+        fileSize.setText("File size:" + String.valueOf((float) parsed_details.getFilesize() /
+                1024.0) + " kB");
 
         TextView duration = findViewById(R.id.textDuration); // Duration
-        duration.setText(String.valueOf(parsed_details.getDuration()));
+        duration.setText("Duration:" + String.valueOf(parsed_details.getDuration()) + " s");
 
         TextView samplerate = findViewById(R.id.textSampleRate); // Samplerate
-        samplerate.setText(String.valueOf(parsed_details.getSamplerate()));
+        samplerate.setText("Sample rate: " + String.valueOf(parsed_details.getSamplerate() / 1000)
+                + " kHz");
 
         TextView username = findViewById(R.id.textUsername); // Username
         username.setText(parsed_details.getUsername());
 
         TextView numDownloads = findViewById(R.id.textNumDownloads); // Number of downloads
-        numDownloads.setText(String.valueOf(parsed_details.getNum_downloads()));
+        numDownloads.setText("Number of downloads: " + String.valueOf(parsed_details.getNum_downloads()));
 
         TextView avgRating = findViewById(R.id.textAvgRating); // Average rating
-        avgRating.setText(String.valueOf(parsed_details.getAvg_rating()));
+        avgRating.setText("Average rating: " + String.valueOf(parsed_details.getAvg_rating()));
 
         TextView numRatings = findViewById(R.id.textNumRatings); // Number of ratings
-        numRatings.setText(String.valueOf(parsed_details.getNum_ratings()));
+        numRatings.setText("Number of ratings: " + String.valueOf(parsed_details.getNum_ratings()));
 
         // Handle play button click
         ImageButton playButton = findViewById(R.id.btnPlay);

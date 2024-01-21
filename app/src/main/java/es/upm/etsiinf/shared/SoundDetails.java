@@ -35,7 +35,7 @@ public class SoundDetails {
     @SerializedName("type")
     private String type;
     @SerializedName("filesize")
-    private String filesize;
+    private int filesize;
 
     @SerializedName("duration")
     private float duration;
@@ -117,11 +117,11 @@ public class SoundDetails {
         this.type = type;
     }
 
-    public String getFilesize() {
+    public int getFilesize() {
         return filesize;
     }
 
-    public void setFilesize(String filesize) {
+    public void setFilesize(int filesize) {
         this.filesize = filesize;
     }
 
